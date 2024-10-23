@@ -10,13 +10,13 @@ def get_list_of_directories() -> list[str]:
 
     for item in itens_no_diretorio:
         caminho_item = os.path.join(diretorio_atual, item)
-        
+
         if os.path.isdir(caminho_item):
             itens_no_subdiretorio = os.listdir(caminho_item)
-            
+
             if ".git" in itens_no_subdiretorio:
                 diretorios_com_git.append(item)
-                    
+
     diretorios_com_git = [".."] if not diretorios_com_git else diretorios_com_git
 
     return diretorios_com_git
@@ -25,6 +25,7 @@ def get_list_of_directories() -> list[str]:
 def list_local_git_directories(repositorios: list[str]) -> None:
     for idx, repositorio in enumerate(repositorios):
         print(f"{idx + 1}. {repositorio}")
+
 
 if __name__ == "__main__":
     print(get_list_of_directories())

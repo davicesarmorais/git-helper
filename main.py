@@ -28,7 +28,7 @@ def main() -> None:
                 git.repositorio = "."
             else:
                 git.repositorio = repositorios[idx]
-            
+
         if opcao == "c":
             user = input("Nome do usuário (ou '.' para cancelar): ").strip() or git.name
             if user == ".":
@@ -60,7 +60,8 @@ def main() -> None:
             git.list_branches(remote=True)
             print("Digite '.' para voltar")
             branch = input("Nome da branch que quer ir: ")
-            if branch == '.': continue
+            if branch == ".":
+                continue
             git.checkout(branch)
 
         elif opcao == "b":
@@ -69,22 +70,25 @@ def main() -> None:
         elif opcao == "w":
             print("Digite '.' para voltar")
             branch = input("Nome da branch: ")
-            if branch == '.': continue
+            if branch == ".":
+                continue
             branch = "main" if not branch else branch
             git.push(branch)
 
         elif opcao == "e":
             print("Digite '.' para voltar")
             branch = input("Nome da branch: ")
-            if branch == '.': continue
+            if branch == ".":
+                continue
             branch = "main" if not branch else branch
             git.pull(branch)
 
         elif opcao == "f":
             break
 
-        if opcao not in "0":
+        if opcao not in "0b":
             input("Aperte enter para continuar...")
+
 
 if __name__ == "__main__":
     main()
