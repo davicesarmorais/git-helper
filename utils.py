@@ -2,26 +2,32 @@ import os
 import platform
 import subprocess
 
-import os
+
+def get_list_of_directories() -> list[str]:
+    diretorio_atual = os.getcwd()
+    itens_no_diretorio = os.listdir(diretorio_atual)
+    diretorios_com_git = []
+
+    for item in itens_no_diretorio:
+        caminho_item = os.path.join(diretorio_atual, item)
+        
+        if os.path.isdir(caminho_item):
+            itens_no_subdiretorio = os.listdir(caminho_item)
+            
+            if ".git" in itens_no_subdiretorio:
+                diretorios_com_git.append(item)
+                    
+    diretorios_com_git = [".."] if not diretorios_com_git else diretorios_com_git
+
+    return diretorios_com_git
 
 
-def list_of_directories(path=".") -> None:
-    diretorios = []
-
-    for dirpath, dirnames, _ in os.walk(path):
-        git_path = os.path.join(dirpath, ".git")
-
-        if os.path.isdir(git_path):
-            if dirpath == ".":
-                diretorios.append("..\\")
-                break
-            diretorios.append(dirpath)
-
-    return diretorios
-
+def list_local_git_directories(repositorios: list[str]) -> None:
+    for idx, repositorio in enumerate(repositorios):
+        print(f"{idx + 1}. {repositorio}")
 
 if __name__ == "__main__":
-    print(list_of_directories())
+    print(get_list_of_directories())
 
 
 def get_token() -> str:

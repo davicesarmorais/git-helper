@@ -8,14 +8,15 @@ def main() -> None:
     git = Git("davicesarmorais", "davicesarmorais@gmail.com")
 
     while True:
+        clear_terminal()
         print(f"Repositório atual: <{git.repositorio}>")
         imprimir_opcoes()
         opcao = input("Escolha uma opção: ").strip().lower()
+        clear_terminal()
 
         if opcao == "0":
-            repositorios = list_of_directories()
-            for idx, repositorio in enumerate(repositorios):
-                print(f"{idx + 1}. {repositorio[2:]}")
+            repositorios = get_list_of_directories()
+            list_local_git_directories(repositorios)
 
             idx = escolher_repositorio(repositorios)
             if idx == -1:
@@ -23,11 +24,11 @@ def main() -> None:
 
             os.chdir(repositorios[idx])
 
-            if repositorios[idx] == "..\\":
+            if repositorios[idx] == "..":
                 git.repositorio = "."
             else:
                 git.repositorio = repositorios[idx]
-
+            
         if opcao == "c":
             user = input("Nome do usuário (ou '.' para cancelar): ").strip() or git.name
             if user == ".":
@@ -40,6 +41,7 @@ def main() -> None:
                 continue
 
             if input(f"Clonar {repositorios[idx]}? [s/n]: ").strip().lower() == "s":
+                clear_terminal()
                 git.clone(user, repositorios[idx])
                 git.repositorio = repositorios[idx]
                 os.chdir(git.repositorio)
@@ -54,20 +56,35 @@ def main() -> None:
             git.commit(msg)
 
         elif opcao == "d":
-            git.checkout(input("Nome da branch: "))
+            git.list_branches(remote=False)
+            git.list_branches(remote=True)
+            print("Digite '.' para voltar")
+            branch = input("Nome da branch que quer ir: ")
+            if branch == '.': continue
+            git.checkout(branch)
 
         elif opcao == "b":
             operacoes_branches(git)
 
         elif opcao == "w":
-            git.push(input("Nome da branch: "))
+            print("Digite '.' para voltar")
+            branch = input("Nome da branch: ")
+            if branch == '.': continue
+            branch = "main" if not branch else branch
+            git.push(branch)
 
         elif opcao == "e":
-            git.pull(input("Nome da branch: "))
+            print("Digite '.' para voltar")
+            branch = input("Nome da branch: ")
+            if branch == '.': continue
+            branch = "main" if not branch else branch
+            git.pull(branch)
 
         elif opcao == "f":
             break
 
+        if opcao not in "0":
+            input("Aperte enter para continuar...")
 
 if __name__ == "__main__":
     main()
