@@ -3,7 +3,7 @@ import subprocess
 
 
 class Git:
-    def __init__(self, name: str, email: str, repositorio: str = ".") -> None:
+    def __init__(self, name: str, email: str, repositorio: str) -> None:
         self.name = name
         self.email = email
         self.repositorio = repositorio

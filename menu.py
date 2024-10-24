@@ -5,6 +5,7 @@ from utils import clear_terminal
 def imprimir_opcoes() -> None:
     opcoes = [
         "0. Selecionar repositorio",
+        "1. Configurações [TODO]", 
         "C. Clonar repositório",
         "S. Status",
         "Q. Commit (+ add .)",
@@ -13,6 +14,7 @@ def imprimir_opcoes() -> None:
         "W. Push",
         "E. Pull",
         "F. Sair",
+        "V. Abrir vscode (pode não funcionar)" 
     ]
     print("Opções:")
     for opcao in opcoes:

@@ -3,6 +3,19 @@ import platform
 import subprocess
 
 
+def open_vscode() -> None:
+    os.system("code .")
+
+
+def get_repositorio_atual() -> str:
+    diretorio_atual = os.getcwd()
+    itens_no_diretorio = os.listdir(diretorio_atual)
+    if ".git" in itens_no_diretorio:
+        return os.path.basename(diretorio_atual)
+    else:
+        return "."
+
+
 def get_list_of_directories() -> list[str]:
     diretorio_atual = os.getcwd()
     itens_no_diretorio = os.listdir(diretorio_atual)

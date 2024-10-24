@@ -5,7 +5,7 @@ from menu import *
 
 
 def main() -> None:
-    git = Git("davicesarmorais", "davicesarmorais@gmail.com")
+    git = Git("davicesarmorais", "davicesarmorais@gmail.com", get_repositorio_atual())
 
     while True:
         clear_terminal()
@@ -29,7 +29,10 @@ def main() -> None:
             else:
                 git.repositorio = repositorios[idx]
 
-        if opcao == "c":
+        elif opcao == "1":
+            print("TODO")
+
+        elif opcao == "c":
             user = input("Nome do usuário (ou '.' para cancelar): ").strip() or git.name
             if user == ".":
                 continue
@@ -83,10 +86,13 @@ def main() -> None:
             branch = "main" if not branch else branch
             git.pull(branch)
 
+        elif opcao == "v":
+            open_vscode()
+        
         elif opcao == "f":
             break
 
-        if opcao not in "0b":
+        if opcao not in "0bv":
             input("Aperte enter para continuar...")
 
 
