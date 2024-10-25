@@ -66,11 +66,6 @@ def main() -> None:
                 git.add()
                 msg = input("Mensagem do commit: ").strip()
                 git.commit(msg)
-                if git.token:  # MARK: Precisa ser testado
-                    time.sleep(1)
-                    os.system(f"{git.name}")
-                    time.sleep(0.5)
-                    os.system(f"{git.token}")
 
         elif opcao == "d":  # Checkout
             git.list_branches(remote=False)
@@ -91,6 +86,11 @@ def main() -> None:
                 continue
             branch = "main" if not branch else branch
             git.push(branch)
+            if git.token:  # MARK: Precisa ser testado
+                time.sleep(1)
+                os.system(f"{git.name}")
+                time.sleep(0.5)
+                os.system(f"{git.token}")
 
         elif opcao == "e":  # Pull
             print("Digite '.' para voltar")
