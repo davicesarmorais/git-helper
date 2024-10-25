@@ -1,55 +1,21 @@
 import os
 import platform
 import subprocess
+import json
+
+
+def pegar_settings_json() -> dict:
+    with open("settings.json", "r") as file:
+        return json.load(file)
+
+
+def salvar_settings_json(settings: dict) -> None:
+    with open("settings.json", "w") as file:
+        json.dump(settings, file, indent=4)
 
 
 def open_vscode() -> None:
     os.system("code .")
-
-
-def get_repositorio_atual() -> str:
-    diretorio_atual = os.getcwd()
-    itens_no_diretorio = os.listdir(diretorio_atual)
-    if ".git" in itens_no_diretorio:
-        return os.path.basename(diretorio_atual)
-    else:
-        return "."
-
-
-def get_list_of_directories() -> list[str]:
-    diretorio_atual = os.getcwd()
-    itens_no_diretorio = os.listdir(diretorio_atual)
-    diretorios_com_git = []
-
-    for item in itens_no_diretorio:
-        caminho_item = os.path.join(diretorio_atual, item)
-
-        if os.path.isdir(caminho_item):
-            itens_no_subdiretorio = os.listdir(caminho_item)
-
-            if ".git" in itens_no_subdiretorio:
-                diretorios_com_git.append(item)
-
-    diretorios_com_git = [".."] if not diretorios_com_git else diretorios_com_git
-
-    return diretorios_com_git
-
-
-def list_local_git_directories(repositorios: list[str]) -> None:
-    for idx, repositorio in enumerate(repositorios):
-        print(f"{idx + 1}. {repositorio}")
-
-
-if __name__ == "__main__":
-    print(get_list_of_directories())
-
-
-def get_token() -> str:
-    try:
-        with open("token.txt", "r") as file:
-            return file.read().strip()
-    except FileNotFoundError:
-        return "Nenhum token encontrado"
 
 
 def clear_terminal() -> None:

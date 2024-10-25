@@ -1,22 +1,21 @@
 from git import Git
-from utils import clear_terminal
+from utils import clear_terminal, salvar_settings_json
 
 
-def imprimir_opcoes() -> None:
+def imprimir_opcoes_principal() -> None:
     opcoes = [
         "0. Selecionar repositorio",
-        "1. Configurações [TODO]", 
+        "1. Configurações",
         "C. Clonar repositório",
         "S. Status",
-        "Q. Commit (+ add .)",
+        "Q. Commit (+ 'add .')",
         "D. Checkout",
         "B. Branches",
         "W. Push",
         "E. Pull",
         "F. Sair",
-        "V. Abrir vscode (pode não funcionar)" 
+        "V. Abrir vscode (pode não funcionar)\n",
     ]
-    print("Opções:")
     for opcao in opcoes:
         print(opcao)
 
@@ -36,7 +35,48 @@ def imprimir_menu_branches() -> None:
         print(opcao)
 
 
-def operacoes_branches(git: Git) -> None:
+def imprimir_opcoes_settings(git: Git, numbers=False) -> None:
+    print(
+        f"{'1. ' if numbers else ''}Usuário: {git.name if git.name else 'não configurado'}"
+    )
+    print(
+        f"{'2. ' if numbers else ''}Email: {git.email if git.email else 'não configurado'}"
+    )
+    print(
+        f"{'3. ' if numbers else ''}Token: {"configurado" if git.token else "não configurado"}"
+    )
+
+
+def opcao_settings(git: Git) -> None:
+    while True:
+        clear_terminal()
+        imprimir_opcoes_settings(git, numbers=True)
+        print(f"4. Salvar e Sair\n")
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == "4":
+            break
+
+        if opcao in "123":
+            print("Para cancelar digite '.'")
+
+        if opcao == "1":
+            name = input("Nome: ")
+            git.name = name
+
+        elif opcao == "2":
+            email = input("Email: ")
+            git.email = email
+
+        elif opcao == "3":
+            token = input("Token: ")
+            git.token = token
+
+        settings = {k: v for k, v in git.__dict__.items() if k != "repositorio"}
+        salvar_settings_json(settings)
+
+
+def opcao_branches(git: Git) -> None:
     while True:
         clear_terminal()
         imprimir_menu_branches()
@@ -47,7 +87,7 @@ def operacoes_branches(git: Git) -> None:
             print("Para cancelar digite '.'")
 
         if opcao == "1":
-            git.list_branches()
+            git.list_branches(remote=False)
 
         elif opcao == "2":
             git.list_branches(remote=True)
@@ -71,6 +111,8 @@ def operacoes_branches(git: Git) -> None:
             git.delete_branch(branch)
 
         elif opcao == "6":
+            git.list_branches(remote=False)
+            git.list_branches(remote=True)
             branch = input("Nome da branch que quer ir: ")
             if branch == ".":
                 continue
