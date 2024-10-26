@@ -22,7 +22,7 @@ def main() -> None:
 
         if opcao == "0":  # Trocar repositorio
             repositorios = pegar_lista_de_directorios()
-            imprimit_repositorios(repositorios)
+            imprimir_repositorios(repositorios)
             idx = escolher_repositorio(repositorios)
             if idx == -1:
                 continue
@@ -42,7 +42,7 @@ def main() -> None:
             if user == ".":
                 continue
             repositorios = pegar_repositorios_remotos(user)
-            imprimit_repositorios(repositorios)
+            imprimir_repositorios(repositorios)
             idx = escolher_repositorio(repositorios)
             if idx == -1:
                 continue
@@ -63,8 +63,11 @@ def main() -> None:
                 print("Usuário não configurado.")
             else:
                 git.set_git_user_configs()
-                git.add()
+                print("Digite '.' para voltar")
                 msg = input("Mensagem do commit: ").strip()
+                if msg == ".":
+                    continue
+                git.add()
                 git.commit(msg)
 
         elif opcao == "d":  # Checkout
@@ -84,20 +87,15 @@ def main() -> None:
             branch = input("Nome da branch: ").strip()
             if branch == ".":
                 continue
-            branch = "main" if not branch else branch
+            branch = branch or "main"
             git.push(branch)
-            if git.token:  # MARK: Precisa ser testado
-                time.sleep(1)
-                os.system(f"{git.name}")
-                time.sleep(0.5)
-                os.system(f"{git.token}")
 
         elif opcao == "e":  # Pull
             print("Digite '.' para voltar")
             branch = input("Nome da branch: ").strip()
             if branch == ".":
                 continue
-            branch = "main" if not branch else branch
+            branch = branch or "main"
             git.pull(branch)
 
         elif opcao == "f":  # Sair

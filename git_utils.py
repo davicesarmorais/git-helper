@@ -41,7 +41,7 @@ def pegar_lista_de_directorios() -> list[str]:
     return diretorios_com_git
 
 
-def imprimit_repositorios(repositorios: list[str]) -> None:
+def imprimir_repositorios(repositorios: list[str]) -> None:
     for idx, repositorio in enumerate(repositorios, 1):
         print(f"{idx}. {repositorio}")
 

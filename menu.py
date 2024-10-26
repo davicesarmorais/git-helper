@@ -36,12 +36,8 @@ def imprimir_menu_branches() -> None:
 
 
 def imprimir_opcoes_settings(git: Git, numbers=False) -> None:
-    print(
-        f"{'1. ' if numbers else ''}Usuário: {git.name if git.name else 'não configurado'}"
-    )
-    print(
-        f"{'2. ' if numbers else ''}Email: {git.email if git.email else 'não configurado'}"
-    )
+    print(f"{'1. ' if numbers else ''}Usuário: {git.name or 'não configurado'}")
+    print(f"{'2. ' if numbers else ''}Email: {git.email or 'não configurado'}")
     print(
         f"{'3. ' if numbers else ''}Token: {"configurado" if git.token else "não configurado"}"
     )

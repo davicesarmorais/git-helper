@@ -1,4 +1,3 @@
-import os
 import subprocess
 
 
@@ -10,38 +9,57 @@ class Git:
         self.repositorio = repositorio
 
     def add(self) -> None:
-        os.system("git add .")
+        subprocess.run("git add .", shell=True)
 
     def commit(self, msg: str) -> None:
-        subprocess.run(["git", "commit", "-m", msg], check=True)
+        subprocess.run(["git", "commit", "-m", msg])
+
+    def get_repo_url(self) -> str:
+        result = subprocess.run(
+            ["git", "config", "--get", "remote.origin.url"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return result.stdout.strip()
 
     def push(self, branch: str) -> None:
-        os.system(f"git push origin {branch}")
+        if self.token:
+            repo_url = self.get_repo_url()
+            url_with_token = repo_url.replace(
+                "https://", f"https://{self.name}:{self.token}@", 1
+            )
+            subprocess.run(["git", "push", url_with_token, branch])
+        else:
+            subprocess.run(["git", "push", "origin", branch])
 
     def pull(self, branch: str) -> None:
-        os.system(f"git pull origin {branch}")
+        subprocess.run(["git", "pull", "origin", branch])
 
     def status(self) -> None:
-        os.system("git status")
+        subprocess.run("git status", shell=True)
 
     def clone(self, user: str, repositorio: str) -> None:
-        os.system(f"git clone https://github.com/{user}/{repositorio}")
+        subprocess.run(f"git clone https://github.com/{user}/{repositorio}", shell=True)
 
     def checkout(self, branch: str) -> None:
-        os.system(f"git checkout {branch}")
+        subprocess.run(["git", "checkout", branch])
 
     def set_git_user_configs(self) -> None:
-        os.system(f"git config user.name '{self.name}'")
-        os.system(f"git config user.email '{self.email}'")
+        subprocess.run(f"git config user.name '{self.name}'", shell=True)
+        subprocess.run(f"git config user.email '{self.email}'", shell=True)
 
     def list_branches(self, remote: bool = False) -> None:
-        os.system(f"git branch") if not remote else os.system(f"git branch -r")
+        if remote:
+            subprocess.run("git branch -r", shell=True)
+        else:
+            subprocess.run("git branch", shell=True)
 
     def create_branch(self, branch: str) -> None:
-        os.system(f"git branch {branch}")
+        subprocess.run(["git", "branch", branch])
 
     def rename_branch(self, branch: str) -> None:
-        os.system(f"git branch -m {branch}")
+        subprocess.run(["git", "branch", "-m", branch])
 
     def delete_branch(self, branch: str) -> None:
-        os.system(f"git branch -d {branch}")
+        subprocess.run(["git", "branch", "-D", branch])
