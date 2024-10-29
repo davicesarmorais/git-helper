@@ -1,11 +1,20 @@
+from utils.utils import descriptografar, decode_to_bytes, Cor
 import subprocess
 
 
 class Git:
-    def __init__(self, name: str, email: str, token: str, repositorio: str) -> None:
+    def __init__(
+        self,
+        name: str = None,
+        email: str = None,
+        token: str = None,
+        fernet_key: str = None,
+        repositorio: str = None,
+    ) -> None:
         self.name = name
         self.email = email
         self.token = token
+        self.fernet_key = fernet_key
         self.repositorio = repositorio
 
     def add(self) -> None:
@@ -25,11 +34,19 @@ class Git:
 
     def push(self, branch: str) -> None:
         if self.token:
+            token = decode_to_bytes(self.token)
+            fernet_key = decode_to_bytes(self.fernet_key)
+            token = descriptografar(token, fernet_key)
             repo_url = self.get_repo_url()
             url_with_token = repo_url.replace(
-                "https://", f"https://{self.name}:{self.token}@", 1
+                "https://", f"https://{self.name}:{token}@", 1
             )
-            subprocess.run(["git", "push", url_with_token, branch])
+            try:
+                subprocess.run(["git", "push", url_with_token, branch], check=True)
+            except subprocess.CalledProcessError:
+                print(
+                    f"\n{Cor.FAIL}Token inválido. Altere o token nas configurações.{Cor.ENDC}\n"
+                )
         else:
             subprocess.run(["git", "push", "origin", branch])
 
@@ -56,10 +73,23 @@ class Git:
             subprocess.run("git branch", shell=True)
 
     def create_branch(self, branch: str) -> None:
-        subprocess.run(["git", "branch", branch])
+        subprocess.run(["git", "checkout", "-b", branch])
 
     def rename_branch(self, branch: str) -> None:
         subprocess.run(["git", "branch", "-m", branch])
 
     def delete_branch(self, branch: str) -> None:
         subprocess.run(["git", "branch", "-D", branch])
+
+    def get_current_branch(self) -> str:
+        """Retorna o nome da branch atual do repositório Git."""
+        try:
+            resultado = subprocess.run(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            return resultado.stdout.strip()
+        except subprocess.CalledProcessError:
+            return ""

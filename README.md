@@ -6,6 +6,32 @@ Este projeto é uma aplicação de linha de comando (CLI) para **gerenciar repos
 
 ---
 
+## 🚀 Como Executar
+
+### Pré-requisitos:
+
+- **Python 3.9 ou maior** instalado.
+
+### Instalação:
+```
+git clone https://github.com/davicesarmorais/git-helper.git
+```
+```
+cd git-helper
+```
+
+Windows:
+```
+python run.py
+```
+
+Linux:
+```
+python3 run.py
+```
+
+---
+
 ## 📋 Funcionalidades
 
 - **Trocar repositório:** Navegue entre diferentes repositórios no seu sistema.
@@ -17,29 +43,7 @@ Este projeto é uma aplicação de linha de comando (CLI) para **gerenciar repos
 - **Abrir no VSCode:** Inicie o VSCode diretamente do terminal.
 - **Configuração rápida:** Gerencie as configurações do usuário diretamente no menu.
 
----
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-
-- **Python 3.x** instalado.
-```
-git clone https://github.com/davicesarmorais/git-helper.git
-```
-```
-cd git-helper
-```
-```
-pip install -r requirements.txt
-```
-
-Windows:
-```
-python main.py
-```
-
-Linux:
-```
-python3 main.py
-```
+## 💡 Funcionalidades Futuras
+- **Inicialização de repositório:** Inicie um repositorio e defina remotes.
+- **Histórico de commits:** Visualize o histórico de commits diretamente no terminal.
+- **Atalhos personalizados**: Configure atalhos para comandos frequentes.
