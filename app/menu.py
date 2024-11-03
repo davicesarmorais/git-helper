@@ -1,5 +1,4 @@
 from models.git import Git
-from models.saver import DebouncedSaver
 from utils.utils import *
 from utils.git_utils import executar_comando_pedindo_branch, escolher_repositorio
 
@@ -58,21 +57,18 @@ def imprimir_opcoes_settings(git: Git) -> None:
     print(formatar_info_configurada("3. Usuario:", git.token, "configurado"))
 
 
-async def opcao_settings(git: Git) -> None:
+def opcao_settings(git: Git) -> None:
     """
     Menu para configurar o usuário e o token do GitHub.
 
     Permite ao usuário configurar o nome, email e token do GitHub. O token é
     criptografado usando a chave Fernet armazenada no arquivo settings.json.
     """
-    saver = DebouncedSaver()
     while True:
         clear_terminal()
         imprimir_opcoes_settings(git)
         print(f"{Cor.BLUE}4. Salvar e Sair{Cor.ENDC}")
-        opcao = (
-            await async_input(f"\n{Cor.UNDER}Escolha uma opção:{Cor.ENDC} ")
-        ).strip()
+        opcao = input(f"\n{Cor.UNDER}Escolha uma opção:{Cor.ENDC} ").strip()
 
         if opcao == "4":
             break
@@ -81,19 +77,19 @@ async def opcao_settings(git: Git) -> None:
             print("Para cancelar digite '.'")
 
         if opcao == "1":
-            name = (await async_input("Nome: ")).strip()
+            name = input("Nome: ").strip()
             if name == ".":
                 continue
             git.name = name or None
 
         elif opcao == "2":
-            email = (await async_input("Email: ")).strip()
+            email = input("Email: ").strip()
             if email == ".":
                 continue
             git.email = email or None
 
         elif opcao == "3":
-            token = (await async_input("Token: ")).strip()
+            token = input("Token: ").strip()
             if token == ".":
                 continue
             if not token:
@@ -104,10 +100,10 @@ async def opcao_settings(git: Git) -> None:
                 token = encode_to_string(token)
                 git.token = token
 
-        await saver.salvar_em_background(git.__dict__)
+        salvar_em_background(git.__dict__)
 
 
-async def opcao_branches(git: Git) -> None:
+def opcao_branches(git: Git) -> None:
     """
     Menu para gerenciar branches.
 
@@ -117,49 +113,49 @@ async def opcao_branches(git: Git) -> None:
     while True:
         clear_terminal()
         imprimir_menu_branches()
-        opcao = (await async_input(f"\n{Cor.UNDER}Escolha uma opção:{Cor.ENDC} ")).strip()
+        opcao = input(f"\n{Cor.UNDER}Escolha uma opção:{Cor.ENDC} ").strip()
 
         clear_terminal()
 
         if opcao == "1":
             git.list_branches(remote=False)
-            await esperar_enter()
+            esperar_enter()
 
         elif opcao == "2":
             git.list_branches(remote=True)
-            await esperar_enter()
+            esperar_enter()
 
         elif opcao == "3":
             git.list_branches(remote=False)
             print("Para cancelar digite '.'")
-            branch = (await async_input("Nome da nova branch: ")).strip()
+            branch = input("Nome da nova branch: ").strip()
             if branch == ".":
                 continue
             git.create_branch(branch)
-            await esperar_enter()
+            esperar_enter()
 
         elif opcao == "4":
             git.list_branches(remote=False)
             print("Para cancelar digite '.'")
-            branch = (await async_input("Nome novo para a branch: ")).strip()
+            branch = input("Nome novo para a branch: ").strip()
             if branch == ".":
                 continue
             git.rename_branch(branch)
-            await esperar_enter()
+            esperar_enter()
 
         elif opcao == "5":
             git.list_branches(remote=False)
             print("Para cancelar digite '.'")
-            branch = (await async_input("Nome da branch que quer deletar: ")).strip()
+            branch = input("Nome da branch que quer deletar: ").strip()
             if branch == ".":
                 continue
             git.delete_branch(branch)
-            await esperar_enter()
+            esperar_enter()
 
         elif opcao == "6":
             git.list_branches(remote=False)
             git.list_branches(remote=True)
-            await executar_comando_pedindo_branch(git.checkout)
+            executar_comando_pedindo_branch(git.checkout)
 
         elif opcao == "7":
             return
@@ -168,10 +164,10 @@ async def opcao_branches(git: Git) -> None:
             continue
 
 
-async def opcao_trocar_diretorio(git: Git) -> None:
+def opcao_trocar_diretorio(git: Git) -> None:
     diretorios = pegar_lista_de_diretorios()
     imprimir_diretorios(diretorios)
-    idx_diretorio = (await escolher_repositorio(diretorios))
+    idx_diretorio = escolher_repositorio(diretorios)
     if idx_diretorio == -1:
         return
     trocar_para_diretorio_especifico(diretorios[idx_diretorio])

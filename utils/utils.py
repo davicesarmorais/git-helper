@@ -6,7 +6,6 @@ import base64
 from typing import Union
 from cryptography.fernet import Fernet
 from multiprocessing import Process
-import asyncio
 
 
 class Cor:
@@ -27,13 +26,9 @@ def clear_terminal() -> None:
         subprocess.run("clear", shell=True)
 
 
-async def async_input(msg: str) -> str:
-    return await asyncio.to_thread(input, msg)
-
-    
-async def esperar_enter() -> None:
+def esperar_enter() -> None:
     """Espera o usuário pressionar enter para continuar."""
-    await async_input(f"{Cor.BOLD}\nAperte enter para continuar...{Cor.ENDC}")
+    input(f"{Cor.BOLD}\nAperte enter para continuar...{Cor.ENDC}")
 
 
 def open_vscode() -> None:
@@ -141,6 +136,25 @@ def garantir_chaves(settings: dict, chaves_padrao: dict) -> dict:
     for chave, valor_padrao in chaves_padrao.items():
         settings.setdefault(chave, valor_padrao)
     return settings
+
+
+def salvar_settings_json(settings: dict) -> None:
+    """Salva as configurações em um arquivo settings.json no diretório do projeto."""
+    DIRETORIO_PROJETO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    caminho_settings = os.path.join(DIRETORIO_PROJETO, "settings", "settings.json")
+
+    # Cria o diretório se ele não existir
+    if not os.path.exists(os.path.dirname(caminho_settings)):
+        os.makedirs(os.path.dirname(caminho_settings))
+
+    # Salva o arquivo JSON
+    with open(caminho_settings, "w") as file:
+        json.dump(settings, file, indent=4)
+
+
+def salvar_em_background(settings: dict) -> None:
+    process = Process(target=salvar_settings_json, args=(settings,))
+    process.start()
 
 
 # CRIPTOGRAFIA ----------------------

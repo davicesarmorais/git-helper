@@ -24,10 +24,10 @@ def pegar_repositorios_remotos(usuario: str) -> list[str]:
     return repositorios
 
 
-async def escolher_repositorio(repositorios: list[str]) -> int:
+def escolher_repositorio(repositorios: list[str]) -> int:
     """Pede ao usuário escolher um repositório dentre a lista fornecida."""
     while True:
-        escolha = (await async_input("\nEscolha um número ou '.' para cancelar: ")).strip()
+        escolha = input("\nEscolha um número ou '.' para cancelar: ").strip()
         if escolha == ".":
             return -1
         if escolha.isdigit() and 1 <= int(escolha) <= len(repositorios):
@@ -36,26 +36,26 @@ async def escolher_repositorio(repositorios: list[str]) -> int:
             print(f"{Cor.FAIL}Opção inválida. Tente novamente.{Cor.ENDC}")
 
 
-async def executar_comando_pedindo_branch(git_command) -> None:
+def executar_comando_pedindo_branch(git_command) -> None:
     """Pede ao usuário digitar o nome de uma branch e, se válido,
     executa o comando Git passado como parâmetro com o nome da branch como argumento."""
     print("Deixe em branco para usar branch 'main'")
     print("Digite '.' para voltar")
-    branch = (await async_input("Nome da branch: ")).strip()
+    branch = input("Nome da branch: ").strip()
     if branch == ".":
         return
     branch = branch or "main"
     git_command(branch)
-    await esperar_enter()
+    esperar_enter()
 
 
-async def clonar_repositorio(git: Git) -> None:
+def clonar_repositorio(git: Git) -> None:
     """Clona um repositório Git do usuário especificado."""
     print("Deixe em branco para usar seu nome de usuário")
-    user = (await async_input("Nome do usuário (ou '.' para cancelar): ")).strip() or git.name
+    user = input("Nome do usuário (ou '.' para cancelar): ").strip() or git.name
     if not user:
         print("Usuário não configurado...")
-        await esperar_enter()
+        esperar_enter()
         return
 
     if user == ".":
@@ -63,30 +63,30 @@ async def clonar_repositorio(git: Git) -> None:
 
     repositorios = pegar_repositorios_remotos(user)
     imprimir_diretorios(repositorios, remote=True)
-    idx_repositorio = await escolher_repositorio(repositorios)
+    idx_repositorio = escolher_repositorio(repositorios)
     if idx_repositorio == -1:
         return
-    confirmar = (await async_input(f"Clonar {repositorios[idx_repositorio]}? [s/n]: ")).strip()
+    confirmar = input(f"Clonar {repositorios[idx_repositorio]}? [s/n]: ").strip()
     if confirmar in "sS":
         clear_terminal()
         git.clone(user, repositorios[idx_repositorio])
         trocar_para_diretorio_especifico(repositorios[idx_repositorio])
         git.repositorio = pegar_diretorio_atual()
-    
-    await esperar_enter()
+
+    esperar_enter()
 
 
-async def realizar_commit(git: Git) -> None:
+def realizar_commit(git: Git) -> None:
     """Realiza um commit com a mensagem especificada pelo usuário."""
     if not git.name or not git.email:
         print(f"{Cor.FAIL}Usuário não configurado.{Cor.ENDC}")
-        await esperar_enter()
+        esperar_enter()
     else:
         git.set_git_user_configs()
         print("Digite '.' para voltar")
-        msg = await (async_input("Mensagem do commit: ")).strip()
+        msg = input("Mensagem do commit: ").strip()
         if msg == ".":
             return
         git.add()
         git.commit(msg)
-        await esperar_enter()
+        esperar_enter()

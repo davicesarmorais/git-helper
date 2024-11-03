@@ -1,14 +1,12 @@
 from models.git import Git
-from models.saver import DebouncedSaver
 from utils.utils import *
 from utils.git_utils import *
 from app.menu import *
 import inspect
 
 
-async def main() -> None:
+def main() -> None:
     """Função principal do programa."""
-    saver = DebouncedSaver()
     signature = inspect.signature(Git.__init__)
     chaves_padrao = {param: None for param in signature.parameters if param != "self"}
     settings = pegar_settings_json(chaves_padrao)
@@ -16,7 +14,7 @@ async def main() -> None:
 
     if not settings.get("fernet_key"):
         settings["fernet_key"] = encode_to_string(generate_key())
-        await saver.salvar_em_background(settings)
+        salvar_em_background(settings)
 
     git = Git(**settings)
     git.set_safe_directory()
@@ -27,50 +25,45 @@ async def main() -> None:
     while True:
         imprimir_menu_principal_completo(git)
         if git.repositorio != ultimo_diretorio:
-            await saver.salvar_em_background(git.__dict__)
+            salvar_em_background(git.__dict__)
         ultimo_diretorio = git.repositorio
-        opcao = (
-            (await async_input(f"{Cor.UNDER}Escolha uma opção:{Cor.ENDC} "))
-            .strip()
-            .lower()
-        )
+        opcao = input(f"{Cor.UNDER}Escolha uma opção:{Cor.ENDC} ").strip().lower()
 
         clear_terminal()
         if opcao == "0":  # Trocar diretorio
-            await opcao_trocar_diretorio(git)
+            opcao_trocar_diretorio(git)
 
         elif opcao == "1":  # Configuracoes
-            await opcao_settings(git)
+            opcao_settings(git)
 
         elif opcao == "c":  # Clonar
-            await clonar_repositorio(git)
+            clonar_repositorio(git)
 
         elif opcao == "s":  # Status
             git.status()
-            await esperar_enter()
+            esperar_enter()
 
         elif opcao == "q":  # Commit
-            await realizar_commit(git)
+            realizar_commit(git)
 
         elif opcao == "d":  # Checkout
             git.list_branches(remote=False)
             git.list_branches(remote=True)
-            await executar_comando_pedindo_branch(git.checkout)
+            executar_comando_pedindo_branch(git.checkout)
 
         elif opcao == "b":  # Branches
-            await opcao_branches(git)
+            opcao_branches(git)
 
         elif opcao == "w":  # Push
-            await executar_comando_pedindo_branch(git.push)
+            executar_comando_pedindo_branch(git.push)
 
         elif opcao == "e":  # Pull
-            await executar_comando_pedindo_branch(git.pull)
+            executar_comando_pedindo_branch(git.pull)
 
         elif opcao == "v":  # Abrir vscode
             open_vscode()
 
         elif opcao == "f":  # Sair
-            await saver._salvar_settings_json(git.__dict__)
             break
         else:
             continue

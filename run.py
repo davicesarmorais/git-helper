@@ -1,5 +1,4 @@
 import subprocess
-import asyncio
 import time
 
 
@@ -44,4 +43,4 @@ if __name__ == "__main__":
     print("Iniciando...")
     time.sleep(0.5)
 
-    asyncio.run(main())
+    main()
