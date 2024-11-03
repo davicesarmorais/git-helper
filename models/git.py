@@ -5,11 +5,11 @@ import subprocess
 class Git:
     def __init__(
         self,
-        name: str = None,
-        email: str = None,
-        token: str = None,
-        fernet_key: str = None,
-        repositorio: str = None,
+        name: str,
+        email: str,
+        token: str,
+        fernet_key: str,
+        repositorio: str,
     ) -> None:
         self.name = name
         self.email = email
@@ -93,3 +93,6 @@ class Git:
             return resultado.stdout.strip()
         except subprocess.CalledProcessError:
             return ""
+
+    def set_safe_directory(self) -> None:
+        subprocess.run(["git", "config", "--global", "safe.directory", "*"])

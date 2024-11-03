@@ -5,6 +5,8 @@ import json
 import base64
 from typing import Union
 from cryptography.fernet import Fernet
+from multiprocessing import Process
+import asyncio
 
 
 class Cor:
@@ -25,9 +27,13 @@ def clear_terminal() -> None:
         subprocess.run("clear", shell=True)
 
 
-def esperar_enter() -> None:
+async def async_input(msg: str) -> str:
+    return await asyncio.to_thread(input, msg)
+
+    
+async def esperar_enter() -> None:
     """Espera o usuário pressionar enter para continuar."""
-    input(f"{Cor.BOLD}\nAperte enter para continuar...{Cor.ENDC}")
+    await async_input(f"{Cor.BOLD}\nAperte enter para continuar...{Cor.ENDC}")
 
 
 def open_vscode() -> None:
@@ -96,6 +102,14 @@ def diretorio_atual_formatado(caminho_diretorio: str) -> None:
     return nome_diretorio
 
 
+def formatar_info_configurada(label: str, valor: str, display: str) -> str:
+    """Formata a informação se configurada para exibição com cores."""
+    if valor:
+        return f"{label} {Cor.GREEN}{display}{Cor.ENDC}"
+    else:
+        return f"{label} {Cor.WARNING}não configurado{Cor.ENDC}"
+
+
 def trocar_para_diretorio_especifico(caminho_completo: str) -> None:
     """Troca para o diretório especificado, caso ele exista.
 
@@ -127,14 +141,6 @@ def garantir_chaves(settings: dict, chaves_padrao: dict) -> dict:
     for chave, valor_padrao in chaves_padrao.items():
         settings.setdefault(chave, valor_padrao)
     return settings
-
-
-def salvar_settings_json(settings: dict) -> None:
-    """Salva as configurações em um arquivo settings.json no diretório do projeto."""
-    DIRETORIO_PROJETO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    caminho_settings = os.path.join(DIRETORIO_PROJETO, "settings", "settings.json")
-    with open(caminho_settings, "w") as file:
-        json.dump(settings, file, indent=4)
 
 
 # CRIPTOGRAFIA ----------------------
