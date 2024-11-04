@@ -5,11 +5,11 @@ import subprocess
 class Git:
     def __init__(
         self,
-        name: str,
-        email: str,
-        token: str,
-        fernet_key: str,
-        repositorio: str,
+        name: str = None,
+        email: str = None,
+        token: str = None,
+        fernet_key: str = None,
+        repositorio: str = None,
     ) -> None:
         self.name = name
         self.email = email

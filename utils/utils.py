@@ -149,7 +149,7 @@ def salvar_settings_json(settings: dict) -> None:
 
     # Salva o arquivo JSON
     with open(caminho_settings, "w") as file:
-        json.dump(settings, file, indent=4)
+        json.dump(settings, file)
 
 
 def salvar_em_background(settings: dict) -> None:

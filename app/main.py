@@ -2,16 +2,14 @@ from models.git import Git
 from utils.utils import *
 from utils.git_utils import *
 from app.menu import *
-import inspect
 
 
 def main() -> None:
     """Função principal do programa."""
-    signature = inspect.signature(Git.__init__)
-    chaves_padrao = {param: None for param in signature.parameters if param != "self"}
+    chaves_padrao = Git().__dict__
     settings = pegar_settings_json(chaves_padrao)
     settings = garantir_chaves(settings, chaves_padrao)
-
+    
     if not settings.get("fernet_key"):
         settings["fernet_key"] = encode_to_string(generate_key())
         salvar_em_background(settings)

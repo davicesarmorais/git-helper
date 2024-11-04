@@ -54,7 +54,7 @@ def imprimir_menu_branches() -> None:
 def imprimir_opcoes_settings(git: Git) -> None:
     print(formatar_info_configurada("1. Usuario:", git.name, git.name))
     print(formatar_info_configurada("2. Email:", git.email, git.email))
-    print(formatar_info_configurada("3. Usuario:", git.token, "configurado"))
+    print(formatar_info_configurada("3. Token:", git.token, "configurado"))
 
 
 def opcao_settings(git: Git) -> None:
