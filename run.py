@@ -1,4 +1,5 @@
 import subprocess
+import time
 
 
 def carregar_dependencias_do_arquivo() -> list:
@@ -12,28 +13,34 @@ def instalar_dependencias_via_pip() -> None:
     try:
         subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
     except subprocess.CalledProcessError:
-        print("Erro ao instalar dependências")
+        print("\nErro ao instalar dependências")
+        input("Prosseguir mesmo assim (aperte enter)")
 
 
 def listar_dependencias_instaladas() -> list:
     """Retorna uma lista com os nomes das bibliotecas já instaladas."""
-    resultado = subprocess.run(["pip", "list"], capture_output=True, text=True)
-    return [linha.split()[0] for linha in resultado.stdout.split("\n")[2:-1]]
+    resultado = subprocess.run(["pip", "freeze"], capture_output=True, text=True)
+    return [linha.split("==")[0] for linha in resultado.stdout.strip().split("\n")]
 
 
 def verificar_e_instalar_dependencias(faltantes: list, instaladas: list) -> None:
     """Verifica e instala dependências que ainda não estão instaladas."""
     for dependencia in faltantes:
         if dependencia not in instaladas:
+            print("Instalando dependências...")
             instalar_dependencias_via_pip()
             break
 
 
 if __name__ == "__main__":
+    print("Verificando dependências...")
     bibliotecas_instaladas = listar_dependencias_instaladas()
     dependencias_requeridas = carregar_dependencias_do_arquivo()
     verificar_e_instalar_dependencias(dependencias_requeridas, bibliotecas_instaladas)
 
-    from view.main import main
+    from app.main import main
+
+    print("Iniciando...")
+    time.sleep(0.5)
 
     main()

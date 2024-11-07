@@ -5,6 +5,7 @@ import json
 import base64
 from typing import Union
 from cryptography.fernet import Fernet
+from multiprocessing import Process
 
 
 class Cor:
@@ -96,6 +97,14 @@ def diretorio_atual_formatado(caminho_diretorio: str) -> None:
     return nome_diretorio
 
 
+def formatar_info_configurada(label: str, valor: str, display: str) -> str:
+    """Formata a informação se configurada para exibição com cores."""
+    if valor:
+        return f"{label} {Cor.GREEN}{display}{Cor.ENDC}"
+    else:
+        return f"{label} {Cor.WARNING}não configurado{Cor.ENDC}"
+
+
 def trocar_para_diretorio_especifico(caminho_completo: str) -> None:
     """Troca para o diretório especificado, caso ele exista.
 
@@ -133,8 +142,19 @@ def salvar_settings_json(settings: dict) -> None:
     """Salva as configurações em um arquivo settings.json no diretório do projeto."""
     DIRETORIO_PROJETO = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     caminho_settings = os.path.join(DIRETORIO_PROJETO, "settings", "settings.json")
+
+    # Cria o diretório se ele não existir
+    if not os.path.exists(os.path.dirname(caminho_settings)):
+        os.makedirs(os.path.dirname(caminho_settings))
+
+    # Salva o arquivo JSON
     with open(caminho_settings, "w") as file:
-        json.dump(settings, file, indent=4)
+        json.dump(settings, file)
+
+
+def salvar_em_background(settings: dict) -> None:
+    process = Process(target=salvar_settings_json, args=(settings,))
+    process.start()
 
 
 # CRIPTOGRAFIA ----------------------

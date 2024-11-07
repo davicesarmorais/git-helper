@@ -1,14 +1,6 @@
 from models.git import Git
 import requests
-from .utils import (
-    Cor,
-    imprimir_diretorios,
-    clear_terminal,
-    esperar_enter,
-    pegar_diretorio_atual,
-    salvar_settings_json,
-    trocar_para_diretorio_especifico,
-)
+from .utils import *
 
 
 def pegar_repositorios_remotos(usuario: str) -> list[str]:
@@ -80,7 +72,7 @@ def clonar_repositorio(git: Git) -> None:
         git.clone(user, repositorios[idx_repositorio])
         trocar_para_diretorio_especifico(repositorios[idx_repositorio])
         git.repositorio = pegar_diretorio_atual()
-        salvar_settings_json(git.__dict__)
+
     esperar_enter()
 
 

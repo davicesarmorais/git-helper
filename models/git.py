@@ -93,3 +93,6 @@ class Git:
             return resultado.stdout.strip()
         except subprocess.CalledProcessError:
             return ""
+
+    def set_safe_directory(self) -> None:
+        subprocess.run(["git", "config", "--global", "safe.directory", "*"])

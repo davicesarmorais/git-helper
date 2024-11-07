@@ -1,49 +1,35 @@
 from models.git import Git
 from utils.utils import *
 from utils.git_utils import *
-from view.menu import *
-from typing import get_type_hints
+from app.menu import *
 
 
 def main() -> None:
     """Função principal do programa."""
-    chaves_padrao = get_type_hints(Git)
+    chaves_padrao = Git().__dict__
     settings = pegar_settings_json(chaves_padrao)
     settings = garantir_chaves(settings, chaves_padrao)
-
+    
     if not settings.get("fernet_key"):
         settings["fernet_key"] = encode_to_string(generate_key())
-        salvar_settings_json(settings)
+        salvar_em_background(settings)
 
     git = Git(**settings)
+    git.set_safe_directory()
+    ultimo_diretorio = git.repositorio
+    trocar_para_diretorio_especifico(git.repositorio)
+    git.repositorio = pegar_diretorio_atual()
+    # Inicio do programa
     while True:
-        # Inicio do programa
-        clear_terminal()
-        imprimir_opcoes_settings(git)
-
-        trocar_para_diretorio_especifico(git.repositorio)
-        git.repositorio = pegar_diretorio_atual()
-        salvar_settings_json(git.__dict__)
-        print(f"\nRepositorio: {diretorio_atual_formatado(git.repositorio)}")
-
-        branch_atual = git.get_current_branch()
-        if eh_um_repositorio(git.repositorio) and branch_atual:
-            print(f"Branch: {Cor.GREEN}<{branch_atual}>{Cor.ENDC}")
-
-        print()
-        imprimir_opcoes_principal()
+        imprimir_menu_principal_completo(git)
+        if git.repositorio != ultimo_diretorio:
+            salvar_em_background(git.__dict__)
+        ultimo_diretorio = git.repositorio
         opcao = input(f"{Cor.UNDER}Escolha uma opção:{Cor.ENDC} ").strip().lower()
-        clear_terminal()
 
+        clear_terminal()
         if opcao == "0":  # Trocar diretorio
-            diretorios: list[str] = pegar_lista_de_diretorios()
-            imprimir_diretorios(diretorios)
-            idx_diretorio = escolher_repositorio(diretorios)
-            if idx_diretorio == -1:
-                continue
-            trocar_para_diretorio_especifico(diretorios[idx_diretorio])
-            git.repositorio = pegar_diretorio_atual()
-            salvar_settings_json(git.__dict__)
+            opcao_trocar_diretorio(git)
 
         elif opcao == "1":  # Configuracoes
             opcao_settings(git)
